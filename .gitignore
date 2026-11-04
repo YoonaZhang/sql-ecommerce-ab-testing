@@ -1,0 +1,13 @@
+.DS_Store
+.ipynb_checkpoints/
+__pycache__/
+.venv/
+.env
+.env.*
+data/*
+!data/README.md
+!data/schema.csv
+results/
+*.dta
+*.xlsx
+*.xls

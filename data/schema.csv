@@ -1,0 +1,9 @@
+column,meaning
+website_session_id,Unique website session identifier
+landing_page,First page of the session
+page_count,Number of pageviews in the session
+user_id,User identifier
+created_at,Session start timestamp
+device_type,Device category
+bounced,1 if the session has exactly one pageview otherwise 0
+purchased,1 if the session has an associated order otherwise 0
