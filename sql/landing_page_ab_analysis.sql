@@ -1,6 +1,6 @@
 use mavenfuzzyfactory; 
 
--- 构建session level分析表
+-- Build a session-level table from pageviews.
 create temporary table sessionly_homepage
 select website_session_id, 
 min(website_pageview_id) landing_page, 
@@ -25,7 +25,7 @@ and p.created_at < '2012-07-28'
 and utm_source = 'gsearch' 
 and utm_campaign = 'nonbrand';
 
--- 检查是否每一行对应唯一session，关键字段是否有缺失
+-- Check session uniqueness and missing key fields.
 SELECT
     COUNT(*) AS total_rows,
     COUNT(DISTINCT website_session_id) AS unique_sessions,
@@ -35,11 +35,11 @@ SELECT
     SUM(purchased IS NULL) AS missing_purchased
 FROM session_level_bounce;
 
--- 检查AB组人群使用的landing page是否有交叉，是否有人对应多个session
--- 如果有人对应多个session，但landing page无交叉：
--- 若分析重复访问：在保留原实验分组的前提下，可考虑按用户聚类重抽样估计置信区间。
+-- Check repeated users and exposure to both landing-page versions.
+-- Repeated users require a dependence-aware analysis.
+-- User-cluster resampling must retain the original experiment groups.
 -- Cluster bootstrap does not randomly reassign users to treatment/control groups.
--- 选择2: 按user分50/50 A/B组，但此时需重新定义bounce rate，区分是首次session的bounce还是对于全部session的bounce
+-- Alternatively, define a user-level outcome consistently before analysis.
 SELECT
     COUNT(*) AS total_users,
     SUM(session_count > 1) AS users_with_multiple_sessions,
@@ -54,7 +54,7 @@ FROM (
     GROUP BY user_id
 ) u;
 
--- 检查AB组人群本身的差异（此处为使用设备的差异）
+-- Inspect device composition by experiment version.
 SELECT
     landing_page,
     device_type,
